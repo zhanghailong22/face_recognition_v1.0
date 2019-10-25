@@ -1,0 +1,25 @@
+version: '3'   # compose-file的语法版本
+services:    # 定义服务
+  db:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+  app:     # 指定服务1 web
+    build: .    # 使用当前目录下的Dockerfile构建镜像
+    ports:    # 指定端口映射
+      - "9999:9999"
+    container_name: face_recognition  # 容器名称 container_name+services_name 会作为镜像名称
+    links:
+      - db
+  redis:
+    image: "redis:alpine"
+    volumes:   # 指定数据卷
+      - redis-data:/data
+    container_name: redis
+volumes:
+    redis-data:
+      driver: local
